@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<script src='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Map</h1>
+<div id='map'></div>
+<div class='map-overlay' id='features'><h2>US population density</h2><div id='pd'><p>Hover over a state!</p></div></div>
+<div class='map-overlay' id='legend'></div>
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoibHVrZWVhc3QiLCJhIjoiY2poeTFhdXdtMGhxYjN3bHJidnFueXoxYiJ9.ubr3YoV21GHBcd8iJ6jUTQ';
+var map = new mapboxgl.Map({
+  container: 'map', // container id
+  style: 'mapbox://styles/lukeeast/cjhy1qfxf1bwz2sr9fc26b7gc' // replace this with your style URL
+});
+
+map.on('load', function() {
+	var layers = ['0-10', '10-20', '20-50', '50-100', '100-200', '200-500', '500-1000', '1000+'];
+	var colors = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
+for (i = 0; i < layers.length; i++) {
+  var layer = layers[i];
+  var color = colors[i];
+  var item = document.createElement('div');
+  var key = document.createElement('span');
+  key.className = 'legend-key';
+  key.style.backgroundColor = color;
+
+  var value = document.createElement('span');
+  value.innerHTML = layer;
+  item.appendChild(key);
+  item.appendChild(value);
+  legend.appendChild(item);
+}
+map.on('mousemove', function(e) {
+  var states = map.queryRenderedFeatures(e.point, {
+    layers: ['statedata']
+  });
+
+  if (states.length > 0) {
+    document.getElementById('pd').innerHTML = '<h3><strong>' + states[0].properties.name + '</strong></h3><p><strong><em>' + states[0].properties.density + '</strong> people per square mile</em></p>';
+  } else {
+    document.getElementById('pd').innerHTML = '<p>Hover over a state!</p>';
+  }
+});
+
+
+</script>
+
+
+</body>
+</html>
